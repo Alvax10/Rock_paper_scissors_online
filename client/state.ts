@@ -16,15 +16,6 @@ const state = {
     getState() {
         return this.data;
     },
-    setState(newState) {
-        this.data = newState;
-
-        for (const cb of this.listeners) {
-            cb();
-        }
-        localStorage.setItem("matches", JSON.stringify(newState));
-        console.log("Soy el state, he cambiado:", newState);
-    },
     setUserName(userName) {
         const currentState = this.getState();
 
@@ -49,6 +40,15 @@ const state = {
                 this.setState(currentState);
             })
         }
+    },
+    setState(newState) {
+        this.data = newState;
+    
+        for (const cb of this.listeners) {
+            cb();
+        }
+        localStorage.setItem("matches", JSON.stringify(newState));
+        console.log("Soy el state, he cambiado:", newState);
     }
 }
 
