@@ -28,7 +28,7 @@ const state = {
         const currentState = this.getState();
 
         if (currentState.userName) {
-            // console.log("este es el sign in");
+            console.log("este es el sign in");
             fetch(API_BASE_URL + "/auth", {
                 method:"POST",
                 headers: {
@@ -41,7 +41,7 @@ const state = {
                 // console.log(res);
                 return res.json();
             }).then((data) => {
-                // console.log(data);
+                console.log(data);
                 currentState.userId = data.id;
                 this.setState(currentState);
             });

@@ -1,29 +1,11 @@
-import { Router } from "@vaadin/router";
+class ChooseName extends HTMLElement {
 
-class HomePage extends HTMLElement {
     shadow: ShadowRoot;
     constructor() {
         super();
-        this.shadow = this.attachShadow({mode: 'open'});
-    }
-    connectedCallback() {
-        this.render();
-
-        const newGameButton = this.shadow.querySelector(".button__new-game");
-        const joinRoomButton = this.shadow.querySelector(".button__join-room");
-
-        newGameButton.addEventListener("click", (e: any) => {
-            e.preventDefault();
-            Router.go("/choose-name");
-        });
-
-        joinRoomButton.addEventListener("click", (e: any) => {
-            e.preventDefault();
-            Router.go("/join-room");
-        });
+        this.shadow = this.attachShadow({ mode: 'open'});
     }
     render() {
-
         const divEl = document.createElement("div");
         const style = document.createElement("style");
 
@@ -66,8 +48,8 @@ class HomePage extends HTMLElement {
                 <h2 class="title__game">
                     Piedra Papel ó Tijera
                 </h2>
-                <button class="button button__new-game"> Nuevo Juego </button>
-                <button class="button button__join-room">  Ingresar a una Sala </button>
+                <input type="text" placeholder="Tu Nombre" />
+                <button class="button">  Ingresar a la Sala </button>
                 
                 <div class="img__container">
                     <hand-comp hand="tijera"></hand-comp>
@@ -82,4 +64,4 @@ class HomePage extends HTMLElement {
     }
 }
 
-customElements.define("home-page", HomePage);
+customElements.define("choose-name", ChooseName);

@@ -16,16 +16,28 @@ import { firestore, rtdb } from "./db";
 import * as express from "express";
 import * as cors from "cors";
 import { nanoid } from "nanoid";
+import * as path from "path";
 
-const port = process.env.PORT || 3000;
 const app = express();
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
 
 const userCollection = firestore.collection("users");
 const roomsCollection = firestore.collection("rooms");
-app.use(express.static("../dist"));
+
+app.get("/env",(req, res)=> {
+  res.json({
+      environment: process.env.NODE_ENV,
+  });
+});
+
+app.get("/db-env",(req, res)=> {
+  res.json({
+      "db-host": process.env.DB_HOST,
+  });
+});
 
 app.post("/auth", (req, res) => {
     const { name } = req.body;
@@ -82,10 +94,11 @@ app.post("/rooms", (req, res) => {
       }
     });
   });
+  
+app.use(express.static("dist"));
 
-app.get("*", (req, res)=> {
-    res.sendFile(__dirname+"/dist/index.html");
-});
+const relativeRoute = path.resolve(__dirname, "/dist", "index.html");
+console.log(relativeRoute);
 
 app.listen(port, ()=> {
     console.log("Iniciado en el puerto:", port);

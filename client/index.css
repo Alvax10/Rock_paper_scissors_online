@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Odibee+Sans&display=swap');
+@font-face {
+    font-family: "Amreican Typewriter";
+    src: url("./components/text/American Typewriter Regular.ttf");
+}
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+}
+:root {
+    background-image: url(./components/assets/ppt-fondo.png);
+}
