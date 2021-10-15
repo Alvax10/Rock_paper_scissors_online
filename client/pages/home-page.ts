@@ -6,15 +6,15 @@ class HomePage extends HTMLElement {
     }
     connectedCallback() {
         this.render();
+        const currentState = state.getState();
+
         const formEl = this.querySelector(".form");
-        formEl.addEventListener("submit", (e) => {
+        formEl.addEventListener("submit", (e: any) => {
+            const target = e.target;
             e.preventDefault();
-            const currentState = state.getState()
-            const userNameEl = (document.querySelector(".input-name") as HTMLInputElement).value.toString();
-            
-            state.setUserName(userNameEl);
-            state.signUp();
-            state.setState(currentState);
+
+            state.setUserName(target.name.value);
+            state.signIn();
         });
     }
     render() {
@@ -27,7 +27,6 @@ class HomePage extends HTMLElement {
                 <button class="button"> Clickeame para terminar de logearte </button>
             </form>
         `;
-
     }
 }
 
