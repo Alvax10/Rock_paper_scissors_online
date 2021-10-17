@@ -15,14 +15,24 @@ var db_1 = require("./db");
 var express = require("express");
 var cors = require("cors");
 var nanoid_1 = require("nanoid");
-var port = process.env.PORT || 3000;
+var path = require("path");
 var app = express();
+var port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 var userCollection = db_1.firestore.collection("users");
 var roomsCollection = db_1.firestore.collection("rooms");
-app.use(express.static("../dist"));
-app.post("/signup", function (req, res) {
+app.get("/env", function (req, res) {
+    res.json({
+        environment: process.env.NODE_ENV
+    });
+});
+app.get("/db-env", function (req, res) {
+    res.json({
+        "db-host": process.env.DB_HOST
+    });
+});
+app.post("/auth", function (req, res) {
     var name = req.body.name;
     userCollection.where("name", "==", name)
         .get().then(function (searchRes) {
@@ -37,7 +47,7 @@ app.post("/signup", function (req, res) {
             });
         }
         else {
-            res.status(400).json({
+            res.status(200).json({
                 id: searchRes.docs[0].id
             });
         }
@@ -51,7 +61,6 @@ app.post("/rooms", function (req, res) {
         if (doc.exists) {
             var roomRef_1 = db_1.rtdb.ref("rooms/" + (0, nanoid_1.nanoid)());
             roomRef_1.set({
-                messages: [],
                 from: userId
             }).then(function () {
                 var roomLongId = roomRef_1.key;
@@ -74,9 +83,9 @@ app.post("/rooms", function (req, res) {
         }
     });
 });
-app.get("*", function (req, res) {
-    res.sendFile(__dirname + "/dist/index.html");
-});
+app.use(express.static("dist"));
+var relativeRoute = path.resolve(__dirname, "/dist", "index.html");
+console.log(relativeRoute);
 app.listen(port, function () {
     console.log("Iniciado en el puerto:", port);
 });

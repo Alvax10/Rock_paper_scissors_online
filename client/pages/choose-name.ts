@@ -5,6 +5,9 @@ class ChooseName extends HTMLElement {
         super();
         this.shadow = this.attachShadow({ mode: 'open'});
     }
+    connectedCallback() {
+        this.render();
+    } 
     render() {
         const divEl = document.createElement("div");
         const style = document.createElement("style");
@@ -18,8 +21,9 @@ class ChooseName extends HTMLElement {
             }
             .title__game {
                 margin: 25px 0;
-                max-width: 284px;
                 font-size: 80px;
+                max-width: 400px;
+                padding-left: 70px;
                 color: rgba(0, 144, 72, 1);
                 font-family: 'American Typewriter', sans;
             }
@@ -46,7 +50,7 @@ class ChooseName extends HTMLElement {
         divEl.innerHTML = `
             <div class="general-container">
                 <h2 class="title__game">
-                    Piedra Papel ó Tijera
+                    Piedra Papel ó Tu vieja
                 </h2>
                 <input type="text" placeholder="Tu Nombre" />
                 <button class="button">  Ingresar a la Sala </button>
