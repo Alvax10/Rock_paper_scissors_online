@@ -156,6 +156,8 @@ const state = {
             }).then((data) => {
                 currentState.rtdbRoomId = data.rtdbRoomId;
                 this.setState(currentState);
+                this.loadFirstPlayerInfoToRtdb();
+                this.loadSecondPlayerInfoToRtdb();
                 callback();
             });
         } else {
@@ -163,35 +165,33 @@ const state = {
             callback;
         }
     },
-    loadFirstPlayerInfoToRtdb(callback?) {
+    loadFirstPlayerInfoToRtdb() {
         const currentState = this.getState();
         const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
                 
         chatRoomRef.on("value", (snap) => {
             const informationFromFirebase = snap.val();
                 
-            currentState["userId-player1"] == informationFromFirebase["current-game"]["player-1"].userId;
-            currentState["userName-player1"] == informationFromFirebase["current-game"]["player-1"].userName;
+            currentState["userId-player1"] = informationFromFirebase["current-game"]["player-1"].userId;
+            currentState["userName-player1"] = informationFromFirebase["current-game"]["player-1"].userName;
 
             console.log(informationFromFirebase);
         });
         this.setState(currentState);
-        callback();
     },
-    loadSecondPlayerInfoToRtdb(callback?) {
+    loadSecondPlayerInfoToRtdb() {
         const currentState = this.getState();
         const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
                 
         chatRoomRef.on("value", (snap) => {
             const informationFromFirebase = snap.val();
                 
-            currentState["userId-player2"] == informationFromFirebase["current-game"]["player-2"].userId;
-            currentState["userName-player2"] == informationFromFirebase["current-game"]["player-2"].userName;
+            currentState["userId-player2"] = informationFromFirebase["current-game"]["player-2"].userId;
+            currentState["userName-player2"] = informationFromFirebase["current-game"]["player-2"].userName;
 
             console.log(informationFromFirebase);
         });
         this.setState(currentState);
-        callback();
     },
     connectPlayersState(callback?) {
         const currentState = this.getState();
@@ -200,15 +200,16 @@ const state = {
         chatRoomRef.on("value", (snap) => {
             const informationFromFirebase = snap.val();
 
-            informationFromFirebase["current-game"]["player-1"].userId == currentState["userId-player1"];
-            informationFromFirebase["current-game"]["player-1"].userName == currentState["userName-player1"];
+            informationFromFirebase["current-game"]["player-1"].userId = currentState["userId-player1"];
+            informationFromFirebase["current-game"]["player-1"].userName = currentState["userName-player1"];
 
-            informationFromFirebase["current-game"]["player-2"].userId == currentState["userId-player2"];
-            informationFromFirebase["current-game"]["player-2"].userName == currentState["userName-player2"];
+            informationFromFirebase["current-game"]["player-2"].userId = currentState["userId-player2"];
+            informationFromFirebase["current-game"]["player-2"].userName = currentState["userName-player2"];
+
+            // console.log("esto es la conección de los estados",informationFromFirebase);
+            callback;
         });
-
         this.setState(currentState);
-        callback();
     },
     setState(newState) {
         this.data = newState;

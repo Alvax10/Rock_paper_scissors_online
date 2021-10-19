@@ -9,24 +9,17 @@ class shareRoom extends HTMLElement {
     }
     connectedCallback() {
         this.render();
-        
-    }
-    listeners() {
-        this.render();
         const currentState = state.getState();
-    
-        state.loadFirstPlayerInfoToRtdb(() => {
-            console.log("mandé mi info a la rtdb");
-            state.connectPlayersState(() => {
-    
-                console.log("recibí la info de la rtdb de player 2");
-                if(currentState["userId-player2"]) {
-                    state.setState(currentState);
-                    Router.go("/instructions");
-                } else {
-                    console.error("no hay userId en player2")
-                }
-            });
+
+            
+        state.connectPlayersState(() => {
+
+            if(currentState["userId-player2"]) {
+                state.setState(currentState);
+                Router.go("/instructions");
+            } else {
+                console.error("no hay userId en player2")
+            }
         });
     }
     render() {
@@ -120,7 +113,6 @@ class shareRoom extends HTMLElement {
 
         this.shadow.appendChild(style);
         this.shadow.appendChild(divEl);
-        this.listeners();
     }
 }
 

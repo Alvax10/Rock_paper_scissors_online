@@ -21,7 +21,7 @@ class ChooseName extends HTMLElement {
             state.setFirstPlayerUserName(inputNameEl);
             state.signInFirstPlayer(() => {
                 state.askNewRoom(()=> {
-                    state.setState(currentState)
+                    state.setState(currentState);
                     state.accessToRoom(() => {
                         console.log("accedí al room");
                         Router.go("/share-room");

@@ -21,13 +21,10 @@ class JoinRoom extends HTMLElement {
             state.accessToRoom(()=> {
 
                 console.log("accedí al room");
-                state.loadSecondPlayerInfoToRtdb(() => {
-
-                    console.log("mandé mi info a la rtdb");
                     state.connectPlayersState(() => {
                         
-                        console.log("recibí la info de la rtdb de player 1");
                         if(currentState["userId-player1"]) {
+
                             console.log("hay user id player 1");
                             state.setState(currentState);
                             Router.go("/instructions");
@@ -35,7 +32,6 @@ class JoinRoom extends HTMLElement {
                             console.error("no hay userId en player1")
                         }
                     });
-                });
             });
         });
     } 
