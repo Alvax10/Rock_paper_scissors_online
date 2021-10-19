@@ -1,6 +1,6 @@
 import { Router } from "@vaadin/router";
 
-class HomePage extends HTMLElement {
+class roomFull extends HTMLElement {
     shadow: ShadowRoot;
     constructor() {
         super();
@@ -9,17 +9,11 @@ class HomePage extends HTMLElement {
     connectedCallback() {
         this.render();
 
-        const newGameButton = this.shadow.querySelector(".button__new-game");
-        const joinRoomButton = this.shadow.querySelector(".button__join-room");
+        const buttonLeaveEl = this.shadow.querySelector(".button");
 
-        newGameButton.addEventListener("click", (e: any) => {
+        buttonLeaveEl.addEventListener("click", (e: any) => {
             e.preventDefault();
-            Router.go("/choose-name");
-        });
-
-        joinRoomButton.addEventListener("click", (e: any) => {
-            e.preventDefault();
-            Router.go("/choose-name-second-player");
+            Router.go("/");
         });
     }
     render() {
@@ -47,6 +41,13 @@ class HomePage extends HTMLElement {
                 color: rgba(0, 144, 72, 1);
                 font-family: 'American Typewriter', sans;
             }
+            .room-full__warning {
+                width: 317px;
+                height: 175px;
+                font-size: 35px;
+                align-items: center;
+                font-family: 'American Typewriter', sans;
+            }
             .button {
                 width: 322px;
                 height: 87px;
@@ -72,9 +73,11 @@ class HomePage extends HTMLElement {
                 <h2 class="title__game">
                     Piedra Papel ó Tijera
                 </h2>
-                <button class="button button__new-game"> Nuevo Juego </button>
-                <button class="button button__join-room">  Ingresar a una Sala </button>
                 
+                <h4 class="room-full__warning"> Ups, this room is full and your user name doesn't match with neither of the players!< </h4>
+                
+                <button class="button"> Leave </button>
+
                 <div class="img__container">
                     <hand-comp hand="tijera"></hand-comp>
                     <hand-comp hand="piedra"></hand-comp>
@@ -88,4 +91,4 @@ class HomePage extends HTMLElement {
     }
 }
 
-customElements.define("home-page", HomePage);
+customElements.define("room-full", roomFull);

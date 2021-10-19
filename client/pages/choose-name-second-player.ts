@@ -1,29 +1,32 @@
 import { Router } from "@vaadin/router";
+import { state } from "../state";
 
-class HomePage extends HTMLElement {
+class ChooseNameSecondPlayer extends HTMLElement {
+
     shadow: ShadowRoot;
     constructor() {
         super();
-        this.shadow = this.attachShadow({mode: 'open'});
+        this.shadow = this.attachShadow({ mode: 'open'});
     }
     connectedCallback() {
         this.render();
+        
+        const currentState = state.getState();
+        const formEl = this.shadow.querySelector(".form");
+        const inputNameEl = (this.shadow.querySelector(".input-name") as HTMLInputElement);
 
-        const newGameButton = this.shadow.querySelector(".button__new-game");
-        const joinRoomButton = this.shadow.querySelector(".button__join-room");
-
-        newGameButton.addEventListener("click", (e: any) => {
+        formEl.addEventListener("submit", (e: any) => {
             e.preventDefault();
-            Router.go("/choose-name");
-        });
 
-        joinRoomButton.addEventListener("click", (e: any) => {
-            e.preventDefault();
-            Router.go("/choose-name-second-player");
+            state.setSecondPlayerUserName(inputNameEl);
+            state.signInSecondPlayer(() => {
+                
+                state.setState(currentState);
+                Router.go("/join-room");
+            });
         });
-    }
+    } 
     render() {
-
         const divEl = document.createElement("div");
         const style = document.createElement("style");
 
@@ -46,6 +49,24 @@ class HomePage extends HTMLElement {
                 padding-left: 40px;
                 color: rgba(0, 144, 72, 1);
                 font-family: 'American Typewriter', sans;
+            }
+            @media (min-width: 500px) {
+                .title__game {
+                    padding-left: 70px;
+                }
+            }
+            .form {
+                display:flex;
+                flex-direction: column;
+            }
+            .input-name {
+                height: 80px;
+                width: 275px;
+                font-size: 35px;
+                padding: 5px 10px;
+                background: #FFFFFF;
+                border-radius: 10px;
+                border: 10px solid #182460;
             }
             .button {
                 width: 322px;
@@ -72,8 +93,10 @@ class HomePage extends HTMLElement {
                 <h2 class="title__game">
                     Piedra Papel ó Tijera
                 </h2>
-                <button class="button button__new-game"> Nuevo Juego </button>
-                <button class="button button__join-room">  Ingresar a una Sala </button>
+                <form class="form">
+                    <input type="text" class="input-name" placeholder="Tu Nombre" />
+                    <button class="button">  Empezar </button>
+                </form>
                 
                 <div class="img__container">
                     <hand-comp hand="tijera"></hand-comp>
@@ -88,4 +111,4 @@ class HomePage extends HTMLElement {
     }
 }
 
-customElements.define("home-page", HomePage);
+customElements.define("choose-name-second-player", ChooseNameSecondPlayer);

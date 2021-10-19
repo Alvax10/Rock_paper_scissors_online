@@ -1,6 +1,6 @@
 import { Router } from "@vaadin/router";
 
-class HomePage extends HTMLElement {
+class instructions extends HTMLElement {
     shadow: ShadowRoot;
     constructor() {
         super();
@@ -9,17 +9,12 @@ class HomePage extends HTMLElement {
     connectedCallback() {
         this.render();
 
-        const newGameButton = this.shadow.querySelector(".button__new-game");
-        const joinRoomButton = this.shadow.querySelector(".button__join-room");
+        const playButton = this.shadow.querySelector(".button__new-game");
 
-        newGameButton.addEventListener("click", (e: any) => {
+        playButton.addEventListener("click", (e: any) => {
             e.preventDefault();
-            Router.go("/choose-name");
-        });
-
-        joinRoomButton.addEventListener("click", (e: any) => {
-            e.preventDefault();
-            Router.go("/choose-name-second-player");
+            
+            Router.go("/waiting-to-play");
         });
     }
     render() {
@@ -47,18 +42,12 @@ class HomePage extends HTMLElement {
                 color: rgba(0, 144, 72, 1);
                 font-family: 'American Typewriter', sans;
             }
-            .button {
-                width: 322px;
-                height: 87px;
-                margin: 20px 0;
-                color: #D8FCFC;
-                font-size: 45px;
-                text-align: center;
+            .room-full__instructions {
+                width: 317px;
+                height: 175px;
+                font-size: 35px;
                 align-items: center;
-                border-radius: 10px;
-                background-color: #006CFC;
-                border: 10px solid #001997;
-                font-family: 'Odibee Sans', cursive;
+                font-family: 'American Typewriter', sans;
             }
             .img__container {
                 display: flex;
@@ -72,14 +61,17 @@ class HomePage extends HTMLElement {
                 <h2 class="title__game">
                     Piedra Papel ó Tijera
                 </h2>
-                <button class="button button__new-game"> Nuevo Juego </button>
-                <button class="button button__join-room">  Ingresar a una Sala </button>
+                
+                <h4 class="room-full__instructions"> Press play
+                and choose: rock, paper o scissor before the times out! </h4>
                 
                 <div class="img__container">
                     <hand-comp hand="tijera"></hand-comp>
                     <hand-comp hand="piedra"></hand-comp>
                     <hand-comp hand="papel"></hand-comp>
                 </div>
+
+                <button class="button"> ¡Play! </button>
             </div>
         `;
 
@@ -88,4 +80,4 @@ class HomePage extends HTMLElement {
     }
 }
 
-customElements.define("home-page", HomePage);
+customElements.define("instructions-page", instructions);

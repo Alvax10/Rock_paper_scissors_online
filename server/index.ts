@@ -63,42 +63,87 @@ app.post("/auth", (req, res) => {
 });
 
 app.post("/rooms", (req, res) => {
-    const { userId } = req.body;
-  
-    userCollection
-    .doc(userId.toString())
-    .get().then((doc) => {
-      if(doc.exists) {
-        const roomRef = rtdb.ref("rooms/" + nanoid());
-  
-        roomRef.set({
-          from: userId,
-        }).then(() => {
-          const roomLongId = roomRef.key;
-          const roomId = 1000 + Math.floor(Math.random() * 999);
-  
-          roomsCollection.doc(roomId.toString())
-          .set({
-            rtdbRoomId: roomLongId,
-          })
-          .then(() => {
-            res.json({
-              roomId: roomId,
-            });
+  const { userId } = req.body;
+ 
+  userCollection
+  .doc(userId.toString())
+  .get().then((doc) => {
+    if(doc.exists) {
+ 
+      const roomRef = rtdb.ref("rooms/" + nanoid());
+      
+      roomRef.set({
+        "current-game": {
+          "player-1": {
+            "userName": "",
+            "userId": userId,
+            "online": "",
+            "ready-to-play": "",
+            "move": "",
+          },
+          "player-2": {
+            "userName": "",
+            "userId": "",
+            "online": "",
+            "ready-to-play": "",
+            "move": "",
+          },
+        },
+        "owner-of-the-room": userId,
+      }).then(() => {
+        const roomLongId = roomRef.key;
+        const roomId = 1000 + Math.floor(Math.random() * 999);
+ 
+        roomsCollection.doc(roomId.toString())
+        .set({
+          "current-game": {
+            "player-1": 0,
+            "player-2": 0,
+          },
+          rtdbRoomId: roomLongId,
+        })
+        .then(() => {
+          res.json({
+            roomId: roomId,
           });
         });
-      } else {
-        res.status(401).json({
-          message: "no existis",
-        });
-      }
-    });
+      });
+    } else {
+      res.status(401).json({
+        message: "no existis",
+      });
+    }
   });
-  
+});
+
+app.get("/rooms/:roomId", (req, res) => {
+  const { roomId } = req.params;
+  const { userId } = req.query;
+
+  userCollection
+  .doc(userId.toString())
+  .get().then((doc) => {
+    if(doc.exists) {
+ 
+      roomsCollection
+      .doc(roomId.toString())
+      .get()
+      .then((doc) => {
+        const data = doc.data();
+        res.json(data);
+      });
+ 
+    } else {
+      res.status(401).json({
+        message: "no existis",
+      });
+    }
+  });
+});
+
 app.use(express.static("dist"));
 
 const relativeRoute = path.resolve(__dirname, "/dist", "index.html");
-console.log(relativeRoute);
 
 app.listen(port, ()=> {
     console.log("Iniciado en el puerto:", port);
