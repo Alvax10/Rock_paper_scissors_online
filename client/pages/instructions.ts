@@ -9,7 +9,7 @@ class instructions extends HTMLElement {
     connectedCallback() {
         this.render();
 
-        const playButton = this.shadow.querySelector(".button__new-game");
+        const playButton = this.shadow.querySelector(".button");
 
         playButton.addEventListener("click", (e: any) => {
             e.preventDefault();
@@ -35,7 +35,7 @@ class instructions extends HTMLElement {
                 }
             }
             .title__game {
-                margin: 25px 0;
+                margin: 15px 0;
                 font-size: 80px;
                 max-width: 400px;
                 padding-left: 40px;
@@ -43,11 +43,27 @@ class instructions extends HTMLElement {
                 font-family: 'American Typewriter', sans;
             }
             .room-full__instructions {
-                width: 317px;
+                max-width: 500px;
                 height: 175px;
+                margin: 20px 20px;
                 font-size: 35px;
+                padding-left: 50px;
                 align-items: center;
                 font-family: 'American Typewriter', sans;
+            }
+            .button {
+                width: 322px;
+                height: 87px;
+                margin: 10px 0;
+                color: #D8FCFC;
+                font-size: 45px;
+                text-align: center;
+                align-items: center;
+                border-radius: 10px;
+                justify-content: center;
+                background-color: #006CFC;
+                border: 10px solid #001997;
+                font-family: 'Odibee Sans', cursive;
             }
             .img__container {
                 display: flex;
@@ -64,14 +80,14 @@ class instructions extends HTMLElement {
                 
                 <h4 class="room-full__instructions"> Press play
                 and choose: rock, paper o scissor before the times out! </h4>
+
+                <button class="button"> ¡Play! </button>
                 
                 <div class="img__container">
                     <hand-comp hand="tijera"></hand-comp>
                     <hand-comp hand="piedra"></hand-comp>
                     <hand-comp hand="papel"></hand-comp>
                 </div>
-
-                <button class="button"> ¡Play! </button>
             </div>
         `;
 

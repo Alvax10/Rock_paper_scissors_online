@@ -8,6 +8,8 @@ const API_BASE_URL = "http://localhost:3000";
 
 const state = {
     data: {
+        "player1-online": false,
+        "player2-online": false,
         "userName-player1": "",
         "userName-player2": "",
         "userId-player1": "",
@@ -81,7 +83,7 @@ const state = {
         // console.log("Esto es antes del fetch en el sign in");
 
         if (currentState["userName-player2"]) {
-            // console.log("este es el sign in");
+
             fetch(API_BASE_URL + "/auth", {
                 method:"POST",
                 headers: {
@@ -98,7 +100,6 @@ const state = {
                 currentState["userId-player2"] = data.id;
 
                 this.setState(currentState);
-                // console.log("me terminé de logear");
                 callback();
             });
         } else {
@@ -138,10 +139,11 @@ const state = {
         }
     },
     accessToRoom(callback?) {
+
         const currentState = this.getState();
         const roomId = currentState.roomId;
-        const userId = currentState["userId-player2"] || currentState["userId-player1"];
-
+        const userId = currentState["userId-player1"] || currentState["userId-player2"];
+        
         if (currentState.roomId) {
  
             fetch(API_BASE_URL + "/rooms/" + roomId + "?userId=" + userId, {
@@ -156,60 +158,63 @@ const state = {
             }).then((data) => {
                 currentState.rtdbRoomId = data.rtdbRoomId;
                 this.setState(currentState);
-                this.loadFirstPlayerInfoToRtdb();
-                this.loadSecondPlayerInfoToRtdb();
                 callback();
             });
+            
         } else {
             if (callback) console.error("El roomId no existe");
-            callback;
         }
     },
-    loadFirstPlayerInfoToRtdb() {
-        const currentState = this.getState();
-        const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
-                
-        chatRoomRef.on("value", (snap) => {
-            const informationFromFirebase = snap.val();
-                
-            currentState["userId-player1"] = informationFromFirebase["current-game"]["player-1"].userId;
-            currentState["userName-player1"] = informationFromFirebase["current-game"]["player-1"].userName;
-
-            console.log(informationFromFirebase);
-        });
-        this.setState(currentState);
-    },
-    loadSecondPlayerInfoToRtdb() {
-        const currentState = this.getState();
-        const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
-                
-        chatRoomRef.on("value", (snap) => {
-            const informationFromFirebase = snap.val();
-                
-            currentState["userId-player2"] = informationFromFirebase["current-game"]["player-2"].userId;
-            currentState["userName-player2"] = informationFromFirebase["current-game"]["player-2"].userName;
-
-            console.log(informationFromFirebase);
-        });
-        this.setState(currentState);
-    },
-    connectPlayersState(callback?) {
+    loadInfoToTheRtdb(callback?) {
         const currentState = this.getState();
         const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
 
-        chatRoomRef.on("value", (snap) => {
-            const informationFromFirebase = snap.val();
+        if (currentState["userName-player2"] == "") {
+                    
+            chatRoomRef.update({
 
-            informationFromFirebase["current-game"]["player-1"].userId = currentState["userId-player1"];
-            informationFromFirebase["current-game"]["player-1"].userName = currentState["userName-player1"];
+                "player-1": {
+                    online: true,
+                    userId: currentState["userId-player1"],
+                    userName: currentState["userName-player1"],
+                },
+            });
+            currentState["player1-online"] = true;
 
-            informationFromFirebase["current-game"]["player-2"].userId = currentState["userId-player2"];
-            informationFromFirebase["current-game"]["player-2"].userName = currentState["userName-player2"];
+            chatRoomRef.get().then((snap) => {
+                const InfoOfPlayers = snap.val();
 
-            // console.log("esto es la conección de los estados",informationFromFirebase);
-            callback;
-        });
+                currentState["player2-online"] = true;
+                currentState["userId-player2"] = InfoOfPlayers["player-2"].userId;
+                currentState["userName-player2"] = InfoOfPlayers["player-2"].userName;
+
+                console.log(InfoOfPlayers);
+            });
+
+        } else if (currentState["userName-player1"] == "") {
+
+            chatRoomRef.update({
+
+                "player-2": {
+                    online: true,
+                    userId: currentState["userId-player2"],
+                    userName: currentState["userName-player2"],
+                },
+            });
+            currentState["player2-online"] = true;
+
+            chatRoomRef.get().then((snap) => {
+                const InfoOfPlayers = snap.val();
+
+                currentState["player1-online"] = true;
+                currentState["userId-player1"] = InfoOfPlayers["player-1"].userId;
+                currentState["userName-player1"] = InfoOfPlayers["player-1"].userName;
+
+                console.log(InfoOfPlayers);
+            });
+        }
         this.setState(currentState);
+        callback();
     },
     setState(newState) {
         this.data = newState;

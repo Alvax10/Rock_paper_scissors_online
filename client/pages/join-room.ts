@@ -17,21 +17,23 @@ class JoinRoom extends HTMLElement {
         formEl.addEventListener("submit", (e: any) => {
             e.preventDefault();
 
-            currentState.roomId = inputRoomIdEl.value.toString(); 
+            currentState.roomId = inputRoomIdEl.value.toString();
+
             state.accessToRoom(()=> {
-
                 console.log("accedí al room");
-                    state.connectPlayersState(() => {
-                        
-                        if(currentState["userId-player1"]) {
 
-                            console.log("hay user id player 1");
-                            state.setState(currentState);
+                if (currentState["userName-player1"] == "") {
+                    state.loadInfoToTheRtdb(() => {
+
+                        state.setState(currentState);
+                        if (currentState["player2-online"] && currentState["player1-online"] == true) {
+        
                             Router.go("/instructions");
-                        } else {
-                            console.error("no hay userId en player1")
                         }
                     });
+                } else {
+                    Router.go("/cannot-acces-room");
+                }
             });
         });
     } 

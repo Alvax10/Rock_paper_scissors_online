@@ -11,15 +11,34 @@ class shareRoom extends HTMLElement {
         this.render();
         const currentState = state.getState();
 
-            
-        state.connectPlayersState(() => {
+        alert("Your parter has 25 seconds to join the room");
 
-            if(currentState["userId-player2"]) {
-                state.setState(currentState);
-                Router.go("/instructions");
-            } else {
-                console.error("no hay userId en player2")
+        var limitedTime = 25;
+        state.loadInfoToTheRtdb(() => {
+        let intervalTimer = setInterval(() => {
+
+            if (limitedTime <= 0 && currentState["userName-player2"] == "") {
+        
+                clearInterval(intervalTimer);
+                alert("The other player didn't connect to the room in time");
+                Router.go("/");
+    
+            } else if (limitedTime < 10 && currentState["userName-player2"] == "") {
+        
+                clearInterval(intervalTimer);
+                state.loadInfoToTheRtdb(() => {
+
+                    state.setState(currentState);
+                    if (currentState["player2-online"] && currentState["player1-online"] == true) {
+                        
+                        Router.go("/instructions");
+                    }
+                });
             }
+            console.log(limitedTime);
+            limitedTime --;
+        }, 1000);
+
         });
     }
     render() {

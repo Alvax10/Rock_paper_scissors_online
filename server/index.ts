@@ -73,22 +73,20 @@ app.post("/rooms", (req, res) => {
       const roomRef = rtdb.ref("rooms/" + nanoid());
       
       roomRef.set({
-        "current-game": {
           "player-1": {
             "userName": "",
-            "userId": userId,
-            "online": "",
+            "userId": "",
+            "online": false,
             "ready-to-play": "",
             "move": "",
           },
           "player-2": {
             "userName": "",
             "userId": "",
-            "online": "",
+            "online": false,
             "ready-to-play": "",
             "move": "",
           },
-        },
         "owner-of-the-room": userId,
       }).then(() => {
         const roomLongId = roomRef.key;

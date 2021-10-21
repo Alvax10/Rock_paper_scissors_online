@@ -10,8 +10,7 @@ class ChooseName extends HTMLElement {
     }
     connectedCallback() {
         this.render();
-        
-        const currentState = state.getState();
+
         const formEl = this.shadow.querySelector(".form");
         const inputNameEl = (this.shadow.querySelector(".input-name") as HTMLInputElement);
 
@@ -20,8 +19,9 @@ class ChooseName extends HTMLElement {
 
             state.setFirstPlayerUserName(inputNameEl);
             state.signInFirstPlayer(() => {
+                
                 state.askNewRoom(()=> {
-                    state.setState(currentState);
+
                     state.accessToRoom(() => {
                         console.log("accedí al room");
                         Router.go("/share-room");

@@ -5,7 +5,7 @@ router.setRoutes([
     {path: "/", component: "home-page"},
     {path: "/choose-name", component: "choose-name"},
     {path: "/choose-name-second-player", component: "choose-name-second-player"},
-    {path: "/room-full-of-players", component: "room-full"},
+    {path: "/cannot-acces-room", component: "room-full"},
     {path: "/join-room", component: "join-room"},
     {path: "/share-room", component: "share-room"},
     {path: "/instructions", component: "instructions-page"},

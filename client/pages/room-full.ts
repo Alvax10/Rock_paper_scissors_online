@@ -34,24 +34,26 @@ class roomFull extends HTMLElement {
                 }
             }
             .title__game {
-                margin: 25px 0;
+                margin: 25px 0 0 0;
                 font-size: 80px;
                 max-width: 400px;
-                padding-left: 40px;
+                padding-left: 80px;
                 color: rgba(0, 144, 72, 1);
                 font-family: 'American Typewriter', sans;
             }
             .room-full__warning {
                 width: 317px;
                 height: 175px;
-                font-size: 35px;
+                font-size: 30px;
+                margin-top: 20px;
+                text-align: center;
+                margin-bottom: 80px;
                 align-items: center;
                 font-family: 'American Typewriter', sans;
             }
             .button {
                 width: 322px;
                 height: 87px;
-                margin: 20px 0;
                 color: #D8FCFC;
                 font-size: 45px;
                 text-align: center;
@@ -74,7 +76,7 @@ class roomFull extends HTMLElement {
                     Piedra Papel ó Tijera
                 </h2>
                 
-                <h4 class="room-full__warning"> Ups, this room is full and your user name doesn't match with neither of the players!< </h4>
+                <h4 class="room-full__warning"> Ups, this room is full and your user name doesn't match with neither of the players! </h4>
                 
                 <button class="button"> Leave </button>
 
