@@ -8,6 +8,7 @@
 }
 body {
     margin: 0;
+    font-family: "Amreican Typewriter", sans-serif;
 }
 :root {
     background-image: url(./components/assets/ppt-fondo.png);

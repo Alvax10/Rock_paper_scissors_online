@@ -21,11 +21,11 @@ class ChooseName extends HTMLElement {
             state.signInFirstPlayer(() => {
                 
                 state.askNewRoom(()=> {
-
                     state.accessToRoom(() => {
+                        
                         console.log("accedí al room");
                         Router.go("/share-room");
-                    });
+                    }); 
                 });
             });
         });

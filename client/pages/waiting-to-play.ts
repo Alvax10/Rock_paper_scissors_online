@@ -1,7 +1,8 @@
 import { Router } from "@vaadin/router";
 import { state } from "../state";
+var userNotReady = "";
 
-class instructions extends HTMLElement {
+class waitingToPlay extends HTMLElement {
     shadow: ShadowRoot;
     constructor() {
         super();
@@ -9,29 +10,33 @@ class instructions extends HTMLElement {
     }
     connectedCallback() {
         this.render();
-
         const currentState = state.getState();
-        const buttonEl = this.shadow.querySelector(".button");
 
-        buttonEl.addEventListener("click", (e: any) => {
-            e.preventDefault();
+        let limitedTimer = 20;
+        const IntervalTimer = setInterval(() => {
 
-            if (currentState["userName-player2"] == "") {
-
-                state.firstPlayerReady(() => {
-                    Router.go("/waiting-to-play");
-                });
+            if (currentState["rtdb"]["player-1"]["ready-to-play"] == "") {
+                clearTimeout(IntervalTimer);
+                console.log(currentState["rtdb"]["player-1"]["userName"]);
+                userNotReady = currentState["rtdb"]["player-1"]["userName"];
             }
-            if (currentState["userName-player1"] == "") {
-                        
-                state.secondPlayerReady(() => {
-                    Router.go("/waiting-to-play");
-                });
+    
+            if (currentState["rtdb"]["player-2"]["ready-to-play"] == "") {
+                clearTimeout(IntervalTimer);
+                console.log(currentState["rtdb"]["player-2"]["userName"]);
+                userNotReady = currentState["rtdb"]["player-2"]["userName"];
+    
             }
-        });
+            if (currentState["rtdb"]["player-2"]["ready-to-play"] == "start" && currentState["rtdb"]["player-1"]["ready-to-play"] == "start") {
+                clearTimeout(IntervalTimer);
+                Router.go("/playing");
+            }
+            console.log(limitedTimer);
+            limitedTimer --;
+        }, 1000);
     }
     render() {
-
+        
         const divEl = document.createElement("div");
         const style = document.createElement("style");
 
@@ -91,10 +96,7 @@ class instructions extends HTMLElement {
                     Piedra Papel ó Tijera
                 </h2>
                 
-                <h4 class="room-full__instructions"> Press play
-                and choose: rock, paper o scissor before the times out! </h4>
-
-                <button class="button"> ¡Play! </button>
+                <h4 class="room-full__instructions"> Waiting for <strong>${userNotReady}</strong> to play!</h4>
                 
                 <div class="img__container">
                     <hand-comp hand="tijera"></hand-comp>
@@ -109,4 +111,4 @@ class instructions extends HTMLElement {
     }
 }
 
-customElements.define("instructions-page", instructions);
+customElements.define("waiting-to-play", waitingToPlay);

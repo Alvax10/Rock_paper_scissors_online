@@ -139,6 +139,37 @@ app.get("/rooms/:roomId", (req, res) => {
   });
 });
 
+app.post("/choice/:longRoomId/:userId", (req, res) => {
+  const { longRoomId } = req.params;
+  const { userId } = req.params;
+  const { move } = req.body;
+
+  userCollection.doc(userId.toString())
+  .get().then((user) => {
+    if (user.exists) {
+
+      const roomRef = rtdb.ref("rooms/" + longRoomId);
+
+      roomRef.set({
+        userId,
+          move,
+      }).then(() => {
+
+        res.json({
+          userId,
+          move,
+      });
+    });
+
+    } else {
+      res.status(401).json({
+        message: "user didn't choose a hand",
+      });
+    }
+  });
+
+});
+
 app.use(express.static("dist"));
 
 const relativeRoute = path.resolve(__dirname, "/dist", "index.html");

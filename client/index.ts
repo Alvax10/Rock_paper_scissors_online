@@ -6,11 +6,11 @@ import "./pages/room-full";
 import "./pages/share-room";
 import "./pages/join-room";
 import "./pages/instructions";
+import "./pages/waiting-to-play";
+import "./pages/playing"
 import { handsComp } from "./components/hands/hands-comp";
-import { state } from "./state";
 
 function main() {
-    state.init();
     handsComp();
 }
 

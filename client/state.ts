@@ -3,19 +3,24 @@
 // Interactuar con local Storage/API
 
 import { rtdb } from "../server/rtdb";
+type move = "scissor" | "paper" | "rock";
+type result = "wins-player1" | "wins-player2" | "tie";
 
 const API_BASE_URL = "http://localhost:3000";
 
 const state = {
     data: {
-        "player1-online": false,
-        "player2-online": false,
         "userName-player1": "",
         "userName-player2": "",
         "userId-player1": "",
         "userId-player2": "",
+        "player1-online": false,
+        "player2-online": false,
+        "player1-ready-to-play": "",
+        "player2-ready-to-play": "",
         roomId: "",
         rtdbRoomId: "",
+        rtdb: {},
         
         currentGame: {
             "player1-move": "none",
@@ -28,7 +33,11 @@ const state = {
     },
     listeners: [],
     init() {
-        const lastLocalStorageState = localStorage.getItem("matches");
+        const localData = JSON.parse(localStorage.getItem("matches"));
+        if (!localData) {
+            return;
+        }
+        this.setState(localData);
     },
     getState() {
         return this.data;
@@ -142,7 +151,14 @@ const state = {
 
         const currentState = this.getState();
         const roomId = currentState.roomId;
-        const userId = currentState["userId-player1"] || currentState["userId-player2"];
+        let userId = currentState["userId-player1"] || currentState["userId-player2"];
+
+        if (currentState["userId-player2"] == "") {
+            userId = currentState["userId-player1"]
+
+        } else if (currentState["userId-player2"] == "") {
+            userId = currentState["userId-player1"]
+        }
         
         if (currentState.roomId) {
  
@@ -165,12 +181,22 @@ const state = {
             if (callback) console.error("El roomId no existe");
         }
     },
+    listenRoom(callback?){
+        const currentState = this.getState();
+        const roomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
+
+        roomRef.on("value", (snap) => {
+            currentState.rtdb = snap.val();
+            this.setState(currentState);
+        });
+        callback();
+    },
     loadInfoToTheRtdb(callback?) {
         const currentState = this.getState();
         const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
 
         if (currentState["userName-player2"] == "") {
-                    
+
             chatRoomRef.update({
 
                 "player-1": {
@@ -180,16 +206,6 @@ const state = {
                 },
             });
             currentState["player1-online"] = true;
-
-            chatRoomRef.get().then((snap) => {
-                const InfoOfPlayers = snap.val();
-
-                currentState["player2-online"] = true;
-                currentState["userId-player2"] = InfoOfPlayers["player-2"].userId;
-                currentState["userName-player2"] = InfoOfPlayers["player-2"].userName;
-
-                console.log(InfoOfPlayers);
-            });
 
         } else if (currentState["userName-player1"] == "") {
 
@@ -202,19 +218,106 @@ const state = {
                 },
             });
             currentState["player2-online"] = true;
-
-            chatRoomRef.get().then((snap) => {
-                const InfoOfPlayers = snap.val();
-
-                currentState["player1-online"] = true;
-                currentState["userId-player1"] = InfoOfPlayers["player-1"].userId;
-                currentState["userName-player1"] = InfoOfPlayers["player-1"].userName;
-
-                console.log(InfoOfPlayers);
-            });
         }
         this.setState(currentState);
         callback();
+    },
+    firstPlayerReady(callback?) {
+        const currentState = this.getState();
+        const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
+
+        chatRoomRef.update({
+
+            "player-1": {
+                "ready-to-play": "start",
+                online: true,
+                userId: currentState["userId-player1"],
+                userName: currentState["userName-player1"],
+            },
+        });
+        currentState["player1-ready-to-play"] = "start";
+
+        this.setState(currentState);
+        callback();
+    },
+    secondPlayerReady(callback?) {
+        const currentState = this.getState();
+        const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
+
+        chatRoomRef.update({
+
+            "player-2": {
+                "ready-to-play": "start",
+                online: true,
+                userId: currentState["userId-player2"],
+                userName: currentState["userName-player2"],
+            },
+        });
+        currentState["player2-ready-to-play"] = "start";
+
+        this.setState(currentState);
+        callback();
+    },
+    setMove() {
+        const currentState = this.getState();
+    },      
+    getResult(player1Move: move, player2Move: move) {
+
+        const player1Wins = [
+            player1Move === "rock" && player2Move === "scissor",
+            player1Move === "paper" && player2Move === "rock",
+            player1Move === "scissor" && player2Move === "paper",
+        ].includes(true);
+
+        const player2Wins = [
+            player2Move === "rock" && player1Move === "scissor",
+            player2Move === "paper" && player1Move === "rock",
+            player2Move === "scissor" && player1Move === "paper",
+        ].includes(true);
+
+        let gameResult: result;
+
+        if (player1Wins) {
+            gameResult = "wins-player1";
+        } else if (player2Wins) {
+            gameResult = "wins-player2";
+        } else {
+            gameResult = "tie";
+        }
+
+        return gameResult;
+    },
+    getCurrentGame() {
+        const currentState = this.getState();
+        return currentState.currentGame;
+    },
+    changeHistory(gameResult: result) {
+        const currentState = this.getState();
+
+        if (gameResult === "wins-player1") {
+            currentState.history.player1 ++;
+
+        } else if (gameResult === "wins-player2") {
+            currentState.history.player2 ++;
+        }
+
+        this.setState(currentState);
+    },
+    restartGame() {
+        const currentState = this.getState();
+        const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
+
+        chatRoomRef.get().then((snap) => {
+            const InfoOfPlayers = snap.val();
+            
+            InfoOfPlayers["player-1"].move = "";
+            InfoOfPlayers["player-2"].move = "";
+        });
+
+        currentState.currentGame["player1-move"] = "";
+        currentState.currentGame["player2-move"] = "";
+
+        this.setState(currentState);
     },
     setState(newState) {
         this.data = newState;
@@ -229,4 +332,4 @@ const state = {
     }
 }
 
-export { state };
+export { state, move };

@@ -1,3 +1,5 @@
+import { state } from "../../state";
+
 const handFiles = {
     piedra: require("url:../assets/piedra-hand.png"),
     papel: require("url:../assets/papel-hand.png"),

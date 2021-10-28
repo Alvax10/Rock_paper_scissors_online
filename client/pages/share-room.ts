@@ -11,34 +11,19 @@ class shareRoom extends HTMLElement {
         this.render();
         const currentState = state.getState();
 
-        alert("Your parter has 25 seconds to join the room");
-
-        var limitedTime = 25;
         state.loadInfoToTheRtdb(() => {
-        let intervalTimer = setInterval(() => {
+            
+            state.listenRoom(() => {
 
-            if (limitedTime <= 0 && currentState["userName-player2"] == "") {
-        
-                clearInterval(intervalTimer);
-                alert("The other player didn't connect to the room in time");
-                Router.go("/");
-    
-            } else if (limitedTime < 10 && currentState["userName-player2"] == "") {
-        
-                clearInterval(intervalTimer);
-                state.loadInfoToTheRtdb(() => {
+                state.suscribe(() => {
 
-                    state.setState(currentState);
-                    if (currentState["player2-online"] && currentState["player1-online"] == true) {
-                        
-                        Router.go("/instructions");
+                    if (currentState["rtdb"]["player-2"].online == false) {
+                        console.error("player 2 is not connected");
+                    } else {
+                       Router.go("/instructions");
                     }
                 });
-            }
-            console.log(limitedTime);
-            limitedTime --;
-        }, 1000);
-
+            });
         });
     }
     render() {
@@ -106,7 +91,6 @@ class shareRoom extends HTMLElement {
                 <header class="header">
                     <div class="both-players__counter">
                         <p class="counter counter-player-1"> ${state.data["userName-player1"]}: ${state.data.history.player1} </p>
-                        <p class="counter counter-player-2"> ${state.data["userName-player2"]}: ${state.data.history.player2} </p>
                     </div>
                     <div class="show-room-id__header">
                         <p class="room"> Room </p>
