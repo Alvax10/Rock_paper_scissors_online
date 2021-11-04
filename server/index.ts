@@ -156,6 +156,7 @@ app.post("/rooms/:roomId", (req, res) => {
       if (gameResult == "wins-player2") {
         roomData["current-game"]["player-2"] += 1;
       }
+
       if (gameResult == "tie") {
         roomData["current-game"]["player-2"] += 0;
         roomData["current-game"]["player-1"] += 0;

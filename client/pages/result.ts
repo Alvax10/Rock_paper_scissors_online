@@ -14,11 +14,11 @@ class ResultPage extends HTMLElement {
     render() {
 
         const result = {
-            "wins-player1": require("url:../components/assets/ganaste.png"),
-            "lose-player1": require("url:../components/assets/perdiste.png"),
-            "wins-player2": require("url:../components/assets/perdiste.png"),
-            "lose-player2": require("url:../components/assets/ganaste.png"),
-            "tie": require("url:../components/assets/tiedGame.svg"),
+            "wins-player1": require("url:../components/assets/ganaste.png").toString(),
+            "lose-player1": require("url:../components/assets/perdiste.png").toString(),
+            "lose-player2": require("url:../components/assets/perdiste.png").toString(),
+            "wins-player2": require("url:../components/assets/ganaste.png").toString(),
+            "tie": require("url:../components/assets/tiedGame.svg").toString(),
         };
 
         const resultPageCont = document.createElement("div");
@@ -31,11 +31,7 @@ class ResultPage extends HTMLElement {
             currentState["rtdb"]["player-1"]["move"],
             currentState["rtdb"]["player-2"]["move"],
         );
-
-        console.log(gameResult.toString())
-
         state.changeHistory(gameResult);
-        state.restartGame();
 
         style.innerHTML = `
             .result {
@@ -102,31 +98,29 @@ class ResultPage extends HTMLElement {
         `;
         
         if (currentState["userName-player2"] == "") {
+            console.log(result[gameResult])
 
             function showMeWhoWon() {
-                var showPlayer1Result = "";
-                
-                if (result[gameResult] == "wins-player1") {
-                    showPlayer1Result = "lose-player2";
-                    this.render();
-                }
-                if (result[gameResult] == "wins-player2") {
-                    showPlayer1Result = "lose-player1";
-                    this.render();
-                }
-                if (result[gameResult] == "tie") {
-                    showPlayer1Result = "tie";
-                    this.render();
-                }
-                console.log(showPlayer1Result);
-                return showPlayer1Result;
-            }
 
-            console.log(showMeWhoWon());
+                if (result[gameResult] == result["wins-player1"]) {
+                    var showResult = result["wins-player1"];
+                    return showResult;
+                }
+                if (result[gameResult] == result["wins-player2"]) {
+                    var showResult = result["lose-player1"];
+                    return showResult;
+                }
+                if (result[gameResult] == result.tie) {
+                    var showResult = result.tie;
+                    return showResult;
+                }
+                return showResult;
+            }
+            console.log(showMeWhoWon())
              
             resultPageCont.innerHTML = `
                 <div class="image-container"> 
-                    <img src="${showMeWhoWon()}" class="result-image" />
+                    <img src=${showMeWhoWon()} class="result-image" />
                 </div>
                 <div class="score-container">
                 <h2 class="score-container__title"> Puntaje </h2>
@@ -146,31 +140,29 @@ class ResultPage extends HTMLElement {
         }
 
         if (currentState["userName-player1"] == "") {
-            
+            console.log(result[gameResult]);
+
             function showMeWhoWon() {
-                var showPlayer2Result = "";
-                
-                if (result[gameResult] == "wins-player1") {
-                    showPlayer2Result = "lose-player2";
-                    this.render();
+
+                if (result[gameResult] == result["wins-player1"]) {
+                    var showResult = result["lose-player2"];
+                    return showResult;
                 }
-                if (result[gameResult] == "wins-player2") {
-                    showPlayer2Result = "lose-player1";
-                    this.render();
+                if (result[gameResult] == result["wins-player2"]) {
+                    var showResult = result["wins-player2"];
+                    return showResult;
                 }
-                if (result[gameResult] == "tie") {
-                    showPlayer2Result = "tie";
-                    this.render();
+                if (result[gameResult] == result["tie"]) {
+                    var showResult = result.tie;
+                    return showResult;
                 }
-                console.log(showPlayer2Result);
-                return showPlayer2Result;
+                return showResult;
             }
-            
-            console.log(showMeWhoWon());
+            console.log(showMeWhoWon())
 
             resultPageCont.innerHTML = `
                 <div class="image-container"> 
-                    <img src="${showMeWhoWon()}" class="result-image" />
+                    <img src=${showMeWhoWon()} class="result-image" />
                 </div>
                 <div class="score-container">
                 <h2 class="score-container__title"> Puntaje </h2>
@@ -189,12 +181,22 @@ class ResultPage extends HTMLElement {
             `;
         }
 
-        // const buttonEl = resultPageCont.querySelector("button-comp");
-        // buttonEl.addEventListener("click", () => {
+        const buttonEl = resultPageCont.querySelector("button-comp");
+        buttonEl.addEventListener("click", () => {
 
-        //     Router.go("/instrucciones");
-        //     state.init();
-        // });
+            if (currentState["userName-player2"] == "") {
+
+                state.restartGame();
+                Router.go("/instructions");
+                state.init();
+            }
+            if (currentState["userName-player1"] == "") {
+
+                state.restartGame();
+                Router.go("/instructions");
+                state.init();
+            }
+        });
 
         this.shadow.appendChild(resultPageCont);
         this.shadow.appendChild(style);

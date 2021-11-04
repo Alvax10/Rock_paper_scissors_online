@@ -87,7 +87,7 @@ class shareRoom extends HTMLElement {
             <div class="general-container">
                 <header class="header">
                     <div class="both-players__counter">
-                        <p class="counter counter-player-1"> ${state.data["userName-player1"]}: ${state.data.history.player1} </p>
+                        <p class="counter counter-player-1"> ${state.data["userName-player1"]}: ${state.data.history["player-1"]} </p>
                     </div>
                     <div class="show-room-id__header">
                         <p class="room"> Room </p>

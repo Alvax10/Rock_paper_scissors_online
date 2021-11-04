@@ -11,21 +11,19 @@ class waitingToPlay extends HTMLElement {
         this.render();
         const currentState = state.getState();
 
-        let limitedTimer = 20;
-        const IntervalTimer = setInterval(() => {
-
-            if (currentState["rtdb"]["player-1"]["ready-to-play"] == "" || currentState["rtdb"]["player-2"]["ready-to-play"] == "") {
-
-                clearTimeout(IntervalTimer);
+        state.listenRoom()
+        state.suscribe(() => {
+    
+            if (window.location.pathname.toString() == "/waiting-to-play" && currentState["rtdb"]["player-1"]["ready-to-play"] == "" || currentState["rtdb"]["player-2"]["ready-to-play"] == "") {
+            
                 console.error("One of the players isn't ready");
             }
-            if (currentState["rtdb"]["player-2"]["ready-to-play"] == "start" && currentState["rtdb"]["player-1"]["ready-to-play"] == "start") {
-                clearTimeout(IntervalTimer);
+            if (window.location.pathname.toString() == "/waiting-to-play" && currentState["rtdb"]["player-2"]["ready-to-play"] == "start" && currentState["rtdb"]["player-1"]["ready-to-play"] == "start") {
+
                 Router.go("/playing");
             }
-            console.log(limitedTimer);
-            limitedTimer --;
-        }, 1000);
+        });
+        state.setState(currentState);
     }
     render() {
         

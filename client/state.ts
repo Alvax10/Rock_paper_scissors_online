@@ -321,10 +321,6 @@ const state = {
 
         return gameResult;
     },
-    getCurrentGame() {
-        const currentState = this.getState();
-        return currentState.currentGame;
-    },
     changeHistory(gameResult: result) {
         const currentState = this.getState();
         const roomId = currentState.roomId;
@@ -337,6 +333,12 @@ const state = {
                 "Cross-Origin-Resource-Policy": "cross-origin",
             },
             body: JSON.stringify({ gameResult: gameResult}),
+        })
+        .then((res) => {
+            return res.json();
+        })
+        .then((data) => {
+            console.log(data);
         });
 
         if (gameResult == "wins-player1") {
@@ -353,12 +355,32 @@ const state = {
         const currentState = this.getState();
         const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
 
-        chatRoomRef.get().then((snap) => {
-            const InfoOfPlayers = snap.val();
-            
-            InfoOfPlayers["player-1"].move = "";
-            InfoOfPlayers["player-2"].move = "";
-        });
+        if (currentState["userName-player-2"] == "") {
+
+            chatRoomRef.update({
+    
+                "player-1": {
+                    "ready-to-play": "",
+                    online: true,
+                    userId: currentState["userId-player1"],
+                    userName: currentState["userName-player1"],
+                    move: "",
+                },
+            });
+        }
+        if (currentState["userName-player1"] == "") {
+
+            chatRoomRef.update({
+
+                "player-2": {
+                    "ready-to-play": "",
+                    online: true,
+                    userId: currentState["userId-player2"],
+                    userName: currentState["userName-player2"],
+                    move: "",
+                },
+            });
+        }
 
         currentState.currentGame["player1-move"] = "";
         currentState.currentGame["player2-move"] = "";
