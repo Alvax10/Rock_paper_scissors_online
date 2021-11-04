@@ -19,7 +19,7 @@ import { nanoid } from "nanoid";
 import * as path from "path";
 
 const app = express();
-const port = process.env.PORT || window.location.href;
+const port = window.location.href;
 
 app.use(express.json());
 app.use(cors());
