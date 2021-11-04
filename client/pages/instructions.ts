@@ -13,6 +13,8 @@ class instructions extends HTMLElement {
         const currentState = state.getState();
         const buttonEl = this.shadow.querySelector(".button");
 
+        // Esta sección de código manda directamente a la página siguiente, no sin antes setear a cada jugador que ya están listos para jugar.
+
         buttonEl.addEventListener("click", (e: any) => {
             e.preventDefault();
 

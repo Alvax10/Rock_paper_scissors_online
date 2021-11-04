@@ -4,7 +4,7 @@
 
 import { rtdb } from "../server/rtdb";
 type move = "scissor" | "paper" | "rock";
-type result = "wins-player1" | "wins-player2" | "tie";
+type result = "wins-player1" | "lose-player1" | "tie";
 
 const API_BASE_URL = "http://localhost:3000";
 
@@ -303,7 +303,7 @@ const state = {
             player1Move === "scissor" && player2Move === "paper",
         ].includes(true);
 
-        const player2Wins = [
+        const player1Lose = [
             player2Move === "rock" && player1Move === "scissor",
             player2Move === "paper" && player1Move === "rock",
             player2Move === "scissor" && player1Move === "paper",
@@ -313,8 +313,8 @@ const state = {
 
         if (player1Wins) {
             gameResult = "wins-player1";
-        } else if (player2Wins) {
-            gameResult = "wins-player2";
+        } else if (player1Lose) {
+            gameResult = "lose-player1";
         } else {
             gameResult = "tie";
         }
@@ -338,15 +338,15 @@ const state = {
             return res.json();
         })
         .then((data) => {
-            console.log(data);
+            // console.log(data);
         });
 
         if (gameResult == "wins-player1") {
-            currentState["history"]["player-1"] = +1;
+            currentState["history"]["player-1"] += 1;
         }
 
-        if (gameResult == "wins-player2") {
-            currentState["history"]["player-2"] = +1;
+        if (gameResult == "lose-player1") {
+            currentState["history"]["player-2"] += 1;
         }
 
         this.setState(currentState);

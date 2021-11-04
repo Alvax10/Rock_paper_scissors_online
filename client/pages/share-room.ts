@@ -15,6 +15,8 @@ class shareRoom extends HTMLElement {
         state.listenRoom();
         state.suscribe(() => {
 
+            // Esta sección de código hace lo mismo que la página join-room (leer esa página para entender que hace este código).
+
             if (window.location.pathname.toString() == "/share-room" && currentState["rtdb"]["player-2"]["online"] == false) {
                 console.error("PLayer 2 isn't connected");
             }

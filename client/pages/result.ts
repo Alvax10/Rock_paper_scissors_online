@@ -27,6 +27,8 @@ class ResultPage extends HTMLElement {
 
         const currentState = state.getState();
 
+        // Aquí se retorna que jugador ganó o su hubo empate.
+
         const gameResult = state.getResult(
             currentState["rtdb"]["player-1"]["move"],
             currentState["rtdb"]["player-2"]["move"],
@@ -98,7 +100,7 @@ class ResultPage extends HTMLElement {
         `;
         
         if (currentState["userName-player2"] == "") {
-            console.log(result[gameResult])
+            // Aquí, en todas las líneas de código inferior, dependiendo que jugador alla ganado, le muestra en la pantalla la imagen de perdedor, ganador o si hubo un empate.
 
             function showMeWhoWon() {
 
@@ -106,7 +108,7 @@ class ResultPage extends HTMLElement {
                     var showResult = result["wins-player1"];
                     return showResult;
                 }
-                if (result[gameResult] == result["wins-player2"]) {
+                if (result[gameResult] == result["lose-player1"]) {
                     var showResult = result["lose-player1"];
                     return showResult;
                 }
@@ -116,7 +118,6 @@ class ResultPage extends HTMLElement {
                 }
                 return showResult;
             }
-            console.log(showMeWhoWon())
              
             resultPageCont.innerHTML = `
                 <div class="image-container"> 
@@ -140,7 +141,6 @@ class ResultPage extends HTMLElement {
         }
 
         if (currentState["userName-player1"] == "") {
-            console.log(result[gameResult]);
 
             function showMeWhoWon() {
 
@@ -148,7 +148,7 @@ class ResultPage extends HTMLElement {
                     var showResult = result["lose-player2"];
                     return showResult;
                 }
-                if (result[gameResult] == result["wins-player2"]) {
+                if (result[gameResult] == result["lose-player1"]) {
                     var showResult = result["wins-player2"];
                     return showResult;
                 }
@@ -158,7 +158,6 @@ class ResultPage extends HTMLElement {
                 }
                 return showResult;
             }
-            console.log(showMeWhoWon())
 
             resultPageCont.innerHTML = `
                 <div class="image-container"> 
@@ -183,6 +182,8 @@ class ResultPage extends HTMLElement {
 
         const buttonEl = resultPageCont.querySelector("button-comp");
         buttonEl.addEventListener("click", () => {
+
+            // Aquí, dependiendo que jugador sea, restablece, en la rtdb, los movimientos y si están listos para volver jugar.
 
             if (currentState["userName-player2"] == "") {
 

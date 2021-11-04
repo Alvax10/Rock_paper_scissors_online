@@ -163,19 +163,21 @@ class  PlayPage extends HTMLElement {
         handComponents.forEach((hand) => {
     
             hand.addEventListener("handClick", (e: any) => {
+
+                // Este EventListener asigna a cada jugador la mano elegida y la setea en la rtdb junto al nombre del jugador
     
                 const movementChosen = e.detail.handMove;
 
                 if (currentState["userName-player2"] == "") {
                     state.setMove(movementChosen, () => {
                     
-                        state.setState(currentState);
+                        // state.setState(currentState);
                     });
                 }
                 if (currentState["userName-player1"] == "") {
                     state.setMove(movementChosen, () => {
     
-                        state.setState(currentState);
+                        // state.setState(currentState);
                     });
                 }
     
@@ -200,13 +202,25 @@ class  PlayPage extends HTMLElement {
         let intervalTimer = setInterval(() => {
             if (limitedTimer < 0) {                
     
+                // Esta sección muestra las manos elegidas y luego de unos segundos lleva a ambos jugadores a Result page, si uno de los jugadores no eligió una mano, llevará a ambos jugadores a instrucciones. 
+
                 clearInterval(intervalTimer);
                 playContainer.classList.add("game-hands-show");
-                playContainer.innerHTML = `
-                    <hand-comp hand=${currentState["rtdb"]["player-1"]["move"]} class="player1-hand" height="215px" width="90px"></hand-comp>
 
-                    <hand-comp hand=${currentState["rtdb"]["player-2"]["move"]} class="player2-hand" height="215px" width="90px"></hand-comp>
-                `;
+                if (currentState["userName-player2"] == "") {
+
+                    playContainer.innerHTML = `
+                        <hand-comp hand=${currentState["rtdb"]["player-2"]["move"]} class="player1-hand" height="215px" width="90px"></hand-comp>
+                        <hand-comp hand=${currentState["rtdb"]["player-1"]["move"]} class="player2-hand" height="215px" width="90px"></hand-comp>
+                    `;
+                }
+                if (currentState["userName-player1"] == "") {
+
+                    playContainer.innerHTML = `
+                        <hand-comp hand=${currentState["rtdb"]["player-1"]["move"]} class="player1-hand" height="215px" width="90px"></hand-comp>
+                        <hand-comp hand=${currentState["rtdb"]["player-2"]["move"]} class="player2-hand" height="215px" width="90px"></hand-comp>
+                    `;
+                }
                 if (currentState["rtdb"]["player-1"]["move"] == "none") {
                     Router.go("/instructions");
                 }

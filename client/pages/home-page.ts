@@ -12,6 +12,8 @@ class HomePage extends HTMLElement {
         const newGameButton = this.shadow.querySelector(".button__new-game");
         const joinRoomButton = this.shadow.querySelector(".button__join-room");
 
+        // Con estos EventListener hago que cada jugador vaya a su correspondiente ruta
+        
         newGameButton.addEventListener("click", (e: any) => {
             e.preventDefault();
             Router.go("/choose-name");

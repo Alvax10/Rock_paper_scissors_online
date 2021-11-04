@@ -13,6 +13,8 @@ class waitingToPlay extends HTMLElement {
 
         state.listenRoom()
         state.suscribe(() => {
+
+            // Esta sección de código chequea desde la rtdb si ambos jugadores están listos para jugar, si es así, los lleva a la playing page.
     
             if (window.location.pathname.toString() == "/waiting-to-play" && currentState["rtdb"]["player-1"]["ready-to-play"] == "" || currentState["rtdb"]["player-2"]["ready-to-play"] == "") {
             

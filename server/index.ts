@@ -153,7 +153,7 @@ app.post("/rooms/:roomId", (req, res) => {
         roomData["current-game"]["player-1"] += 1;
       }
       
-      if (gameResult == "wins-player2") {
+      if (gameResult == "lose-player1") {
         roomData["current-game"]["player-2"] += 1;
       }
 

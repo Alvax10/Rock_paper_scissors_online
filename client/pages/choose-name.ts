@@ -14,6 +14,8 @@ class ChooseName extends HTMLElement {
         const formEl = this.shadow.querySelector(".form");
         const inputNameEl = (this.shadow.querySelector(".input-name") as HTMLInputElement);
 
+        // El usuario setea su nombre para recibir el id, se loguea, pide la creación de un nuevo room y se une a él. 
+
         formEl.addEventListener("submit", (e: any) => {
             e.preventDefault();
 
@@ -22,8 +24,7 @@ class ChooseName extends HTMLElement {
                 
                 state.askNewRoom(()=> {
                     state.accessToRoom(() => {
-                        
-                        console.log("accedí al room");
+                    
                         Router.go("/share-room");
                     }); 
                 });

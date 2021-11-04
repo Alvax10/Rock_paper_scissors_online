@@ -15,6 +15,8 @@ class ChooseNameSecondPlayer extends HTMLElement {
         const formEl = this.shadow.querySelector(".form");
         const inputNameEl = (this.shadow.querySelector(".input-name") as HTMLInputElement);
 
+        // Este EventListener hace que el segundo jugador setee su nombre para recibir su id y después de logearse se une al room que llamó.
+
         formEl.addEventListener("submit", (e: any) => {
             e.preventDefault();
 

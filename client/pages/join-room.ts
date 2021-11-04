@@ -19,7 +19,7 @@ class JoinRoom extends HTMLElement {
             currentState.roomId = inputRoomIdEl.value.toString();
             
             state.accessToRoom(()=> {
-                console.log("accedí al room");
+                // Esta sección setea la información dada anteriormente y la sube a la rtdb, luego de que ambos hayan seteado su información a la rtdb chequea si ambos jugadores están online y los lleva a instrucciones, de lo contrario los lleva a una página donde les avisa que no pueden acceder.
 
                 state.loadInfoToTheRtdb();
                 state.listenRoom();
