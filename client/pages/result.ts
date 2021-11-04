@@ -7,29 +7,34 @@ class ResultPage extends HTMLElement {
     constructor() {
         super();
         this.shadow = this.attachShadow({mode: 'open'});
+    }
+    connectedCallback() {
         this.render();
     }
     render() {
 
         const result = {
             "wins-player1": require("url:../components/assets/ganaste.png"),
+            "lose-player1": require("url:../components/assets/perdiste.png"),
             "wins-player2": require("url:../components/assets/perdiste.png"),
-            tie: require("url:../components/assets/tiedGame.svg"),
+            "lose-player2": require("url:../components/assets/ganaste.png"),
+            "tie": require("url:../components/assets/tiedGame.svg"),
         };
 
         const resultPageCont = document.createElement("div");
         const style = document.createElement("style");
         resultPageCont.setAttribute("class", "result");
 
-        const currentGame = state.getCurrentGame();
+        const currentState = state.getState();
+
         const gameResult = state.getResult(
-            currentGame["rtdb"]["player-1"]["move"],
-            currentGame["rtdb"]["player-2"]["move"],
+            currentState["rtdb"]["player-1"]["move"],
+            currentState["rtdb"]["player-2"]["move"],
         );
 
-        state.changeHistory(gameResult);
-        const currentHistory = state.getState().history;
+        console.log(gameResult.toString())
 
+        state.changeHistory(gameResult);
         state.restartGame();
 
         style.innerHTML = `
@@ -78,40 +83,121 @@ class ResultPage extends HTMLElement {
                 font-size: 45px;
             }
             
-            .button-container {
-                width: 100%;
-                margin-top: auto;
+            .result-button {
+                margin-top: 40px;
             }
-            `;
-
-        resultPageCont.innerHTML = `
-            <div class="image-container"> 
-                <img src=${result[gameResult]} class="result-image" />
-            </div>
-            <div class="score-container">
-            <h2 class="score-container__title"> Puntaje </h2>
-            <article class="score-container__data">
-                <h3 class="score-container__user-data score"> 
-                    Vos: ${currentHistory.player1}
-                </h3>
-                <h3 class="score-container__computer-data score">
-                    Máquina: ${currentHistory.player2}
-                </h3>
-        </article>
-        </div>
-        <div class="button result-button">
-            <button-comp variant="button result-button">Volver a jugar</button-comp>
-        </div>
+            .button {
+                width: 322px;
+                height: 87px;
+                margin: 20px 0;
+                color: #D8FCFC;
+                font-size: 45px;
+                text-align: center;
+                align-items: center;
+                border-radius: 10px;
+                background-color: #006CFC;
+                border: 10px solid #001997;
+                font-family: 'Odibee Sans', cursive;
+            }
         `;
+        
+        if (currentState["userName-player2"] == "") {
 
-        const buttonEl = resultPageCont.querySelector("button-comp");
-        buttonEl.addEventListener("click", () => {
+            function showMeWhoWon() {
+                var showPlayer1Result = "";
+                
+                if (result[gameResult] == "wins-player1") {
+                    showPlayer1Result = "lose-player2";
+                    this.render();
+                }
+                if (result[gameResult] == "wins-player2") {
+                    showPlayer1Result = "lose-player1";
+                    this.render();
+                }
+                if (result[gameResult] == "tie") {
+                    showPlayer1Result = "tie";
+                    this.render();
+                }
+                console.log(showPlayer1Result);
+                return showPlayer1Result;
+            }
 
-            Router.go("/instrucciones");
-            state.init();
-        });
+            console.log(showMeWhoWon());
+             
+            resultPageCont.innerHTML = `
+                <div class="image-container"> 
+                    <img src="${showMeWhoWon()}" class="result-image" />
+                </div>
+                <div class="score-container">
+                <h2 class="score-container__title"> Puntaje </h2>
+                <article class="score-container__data">
+                    <h3 class="score-container__user-data score"> 
+                        ${currentState["rtdb"]["player-1"]["userName"]}: ${currentState["history"]["player-1"]}
+                    </h3>
+                    <h3 class="score-container__computer-data score">
+                    ${currentState["rtdb"]["player-2"]["userName"]}: ${currentState["history"]["player-2"]}
+                    </h3>
+            </article>
+            </div>
+            <div class="result-button">
+                <button-comp class="button">Volver a jugar</button-comp>
+            </div>
+            `;
+        }
+
+        if (currentState["userName-player1"] == "") {
+            
+            function showMeWhoWon() {
+                var showPlayer2Result = "";
+                
+                if (result[gameResult] == "wins-player1") {
+                    showPlayer2Result = "lose-player2";
+                    this.render();
+                }
+                if (result[gameResult] == "wins-player2") {
+                    showPlayer2Result = "lose-player1";
+                    this.render();
+                }
+                if (result[gameResult] == "tie") {
+                    showPlayer2Result = "tie";
+                    this.render();
+                }
+                console.log(showPlayer2Result);
+                return showPlayer2Result;
+            }
+            
+            console.log(showMeWhoWon());
+
+            resultPageCont.innerHTML = `
+                <div class="image-container"> 
+                    <img src="${showMeWhoWon()}" class="result-image" />
+                </div>
+                <div class="score-container">
+                <h2 class="score-container__title"> Puntaje </h2>
+                <article class="score-container__data">
+                    <h3 class="score-container__user-data score"> 
+                        ${currentState["rtdb"]["player-1"]["userName"]}: ${currentState["history"]["player-1"]}
+                    </h3>
+                    <h3 class="score-container__computer-data score">
+                        ${currentState["rtdb"]["player-2"]["userName"]}: ${currentState["history"]["player-2"]}
+                    </h3>
+            </article>
+            </div>
+            <div class="result-button">
+                <button-comp class="button">Volver a jugar</button-comp>
+            </div>
+            `;
+        }
+
+        // const buttonEl = resultPageCont.querySelector("button-comp");
+        // buttonEl.addEventListener("click", () => {
+
+        //     Router.go("/instrucciones");
+        //     state.init();
+        // });
 
         this.shadow.appendChild(resultPageCont);
+        this.shadow.appendChild(style);
     }
 }
 customElements.define("result-page", ResultPage);

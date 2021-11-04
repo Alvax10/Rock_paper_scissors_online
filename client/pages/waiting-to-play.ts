@@ -1,6 +1,5 @@
 import { Router } from "@vaadin/router";
 import { state } from "../state";
-var userNotReady = "";
 
 class waitingToPlay extends HTMLElement {
     shadow: ShadowRoot;
@@ -15,17 +14,10 @@ class waitingToPlay extends HTMLElement {
         let limitedTimer = 20;
         const IntervalTimer = setInterval(() => {
 
-            if (currentState["rtdb"]["player-1"]["ready-to-play"] == "") {
+            if (currentState["rtdb"]["player-1"]["ready-to-play"] == "" || currentState["rtdb"]["player-2"]["ready-to-play"] == "") {
+
                 clearTimeout(IntervalTimer);
-                console.log(currentState["rtdb"]["player-1"]["userName"]);
-                userNotReady = currentState["rtdb"]["player-1"]["userName"];
-            }
-    
-            if (currentState["rtdb"]["player-2"]["ready-to-play"] == "") {
-                clearTimeout(IntervalTimer);
-                console.log(currentState["rtdb"]["player-2"]["userName"]);
-                userNotReady = currentState["rtdb"]["player-2"]["userName"];
-    
+                console.error("One of the players isn't ready");
             }
             if (currentState["rtdb"]["player-2"]["ready-to-play"] == "start" && currentState["rtdb"]["player-1"]["ready-to-play"] == "start") {
                 clearTimeout(IntervalTimer);
@@ -96,12 +88,12 @@ class waitingToPlay extends HTMLElement {
                     Piedra Papel ó Tijera
                 </h2>
                 
-                <h4 class="room-full__instructions"> Waiting for <strong>${userNotReady}</strong> to play!</h4>
+                <h4 class="room-full__instructions"> Waiting for the other player to play!</h4>
                 
                 <div class="img__container">
-                    <hand-comp hand="tijera"></hand-comp>
-                    <hand-comp hand="piedra"></hand-comp>
-                    <hand-comp hand="papel"></hand-comp>
+                    <hand-comp hand="scissor"></hand-comp>
+                    <hand-comp hand="rock"></hand-comp>
+                    <hand-comp hand="paper"></hand-comp>
                 </div>
             </div>
         `;

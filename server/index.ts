@@ -139,35 +139,35 @@ app.get("/rooms/:roomId", (req, res) => {
   });
 });
 
-app.post("/choice/:longRoomId/:userId", (req, res) => {
-  const { longRoomId } = req.params;
-  const { userId } = req.params;
-  const { move } = req.body;
+app.post("/rooms/:roomId", (req, res) => {
+  const { roomId } = req.params;
+  const { gameResult } = req.body;
+  
+  roomsCollection.doc(roomId.toString())
+  .get().then((room) => {
+    
+    if (room.exists) {
+      const roomData = room.data();
+      
+      if (gameResult == "wins-player1") {
+        roomData["current-game"]["player-1"] += 1;
+      }
+      
+      if (gameResult == "wins-player2") {
+        roomData["current-game"]["player-2"] += 1;
+      }
+      if (gameResult == "tie") {
+        roomData["current-game"]["player-2"] += 0;
+        roomData["current-game"]["player-1"] += 0;
+      }
 
-  userCollection.doc(userId.toString())
-  .get().then((user) => {
-    if (user.exists) {
-
-      const roomRef = rtdb.ref("rooms/" + longRoomId);
-
-      roomRef.set({
-        userId,
-          move,
-      }).then(() => {
-
-        res.json({
-          userId,
-          move,
-      });
-    });
-
-    } else {
-      res.status(401).json({
-        message: "user didn't choose a hand",
-      });
+      roomsCollection.doc(roomId.toString()).update(roomData);
     }
-  });
-
+  }).then(() => {
+    res.json({
+      "message": "Another point to the winner player",
+    });
+  })
 });
 
 app.use(express.static("dist"));

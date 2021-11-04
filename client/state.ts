@@ -27,9 +27,9 @@ const state = {
             "player2-move": "none",
         },
         history: {
-            player1: 0,
-            player2: 0,
-        },
+            "player-1": 0,
+            "player-2": 0,
+        }
     },
     listeners: [],
     init() {
@@ -46,23 +46,19 @@ const state = {
         const currentState = this.getState();
         
         currentState["userName-player1"] = userName.value;
-        // console.log("este log está antes del setState de setUserName");
         this.setState(currentState);
     },
     setSecondPlayerUserName(userName) {
         const currentState = this.getState();
 
         currentState["userName-player2"] = userName.value;
-        // console.log("este log está antes del setState de setUserName");
         this.setState(currentState);
     },
     signInFirstPlayer(callback) {
         const currentState = this.getState();
 
-        // console.log("Esto es antes del fetch en el sign in");
-
         if (currentState["userName-player1"]) {
-            // console.log("este es el sign in");
+
             fetch(API_BASE_URL + "/auth", {
                 method:"POST",
                 headers: {
@@ -72,14 +68,13 @@ const state = {
                 },
                 body: JSON.stringify({ name: currentState["userName-player1"] }),
             }).then((res) => {
-                // console.log(res);
                 return res.json();
-            }).then((data) => {
-                // console.log(data);
-                currentState["userId-player1"] = data.id;
 
+            }).then((data) => {
+                
+                currentState["userId-player1"] = data.id;
                 this.setState(currentState);
-                // console.log("me terminé de logear");
+
                 callback();
             });
         } else {
@@ -88,8 +83,6 @@ const state = {
     },
     signInSecondPlayer(callback) {
         const currentState = this.getState();
-
-        // console.log("Esto es antes del fetch en el sign in");
 
         if (currentState["userName-player2"]) {
 
@@ -102,13 +95,13 @@ const state = {
                 },
                 body: JSON.stringify({ name: currentState["userName-player2"] }),
             }).then((res) => {
-                // console.log(res);
                 return res.json();
-            }).then((data) => {
-                // console.log(data);
-                currentState["userId-player2"] = data.id;
 
+            }).then((data) => {
+                
+                currentState["userId-player2"] = data.id;
                 this.setState(currentState);
+
                 callback();
             });
         } else {
@@ -181,17 +174,17 @@ const state = {
             if (callback) console.error("El roomId no existe");
         }
     },
-    listenRoom(callback?){
+    listenRoom(){
         const currentState = this.getState();
         const roomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
 
         roomRef.on("value", (snap) => {
             currentState.rtdb = snap.val();
             this.setState(currentState);
+
         });
-        callback();
     },
-    loadInfoToTheRtdb(callback?) {
+    loadInfoToTheRtdb() {
         const currentState = this.getState();
         const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
 
@@ -220,7 +213,6 @@ const state = {
             currentState["player2-online"] = true;
         }
         this.setState(currentState);
-        callback();
     },
     firstPlayerReady(callback?) {
         const currentState = this.getState();
@@ -258,8 +250,50 @@ const state = {
         this.setState(currentState);
         callback();
     },
-    setMove() {
+    setMove(move: move, callback?) {
         const currentState = this.getState();
+        const chatRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
+        let player = currentState["rtdb"]["player-1"]["userName"] || currentState["rtdb"]["player-2"]["userName"];
+
+        if (currentState["userName-player2"] == "") {
+
+            currentState["rtdb"]["player-1"]["move"] = move;
+            player = currentState["rtdb"]["player-1"]["userName"];
+
+            chatRoomRef.update({
+
+                "player-1": {
+                    "ready-to-play": "start",
+                    online: true,
+                    userId: currentState["userId-player1"],
+                    userName: player,
+                    move: move,
+                },
+            });
+
+            currentState.currentGame["player1-move"] = move;
+            this.setState(currentState);
+        }
+        if (currentState["userName-player1"] == "") {
+
+            currentState["rtdb"]["player-2"]["move"] = move;
+            player = currentState["rtdb"]["player-2"]["userName"];
+
+            chatRoomRef.update({
+
+                "player-2": {
+                    "ready-to-play": "start",
+                    online: true,
+                    userId: currentState["userId-player2"],
+                    userName: player,
+                    move: move,
+                },
+            });
+
+            currentState.currentGame["player2-move"] = move;
+            this.setState(currentState);
+        }
+        callback();
     },      
     getResult(player1Move: move, player2Move: move) {
 
@@ -293,12 +327,24 @@ const state = {
     },
     changeHistory(gameResult: result) {
         const currentState = this.getState();
+        const roomId = currentState.roomId;
 
-        if (gameResult === "wins-player1") {
-            currentState.history.player1 ++;
+        fetch(API_BASE_URL + "/rooms/" + roomId, {
+            method: "post",
+            headers: {
+                Accept:"application/json",
+                "content-type": "application/json",
+                "Cross-Origin-Resource-Policy": "cross-origin",
+            },
+            body: JSON.stringify({ gameResult: gameResult}),
+        });
 
-        } else if (gameResult === "wins-player2") {
-            currentState.history.player2 ++;
+        if (gameResult == "wins-player1") {
+            currentState["history"]["player-1"] = +1;
+        }
+
+        if (gameResult == "wins-player2") {
+            currentState["history"]["player-2"] = +1;
         }
 
         this.setState(currentState);

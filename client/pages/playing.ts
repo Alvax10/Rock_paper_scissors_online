@@ -1,4 +1,4 @@
-import {state , move} from "../state";
+import { state } from "../state";
 import { Router } from "@vaadin/router";
 
 class  PlayPage extends HTMLElement {
@@ -11,7 +11,8 @@ class  PlayPage extends HTMLElement {
     }
     render() {
 
-        var limitedTimer: number = 3;
+        const currentState = state.getState();
+        var limitedTimer: number = 5;
         const playContainer = document.createElement("div");
         const style = document.createElement("style");
         playContainer.setAttribute("class", "game-countdown");
@@ -37,6 +38,7 @@ class  PlayPage extends HTMLElement {
         .hands-container-countdown {
             width: 100%;
             display: flex;
+            margin-top: 70%;
             overflow: hidden;
             align-items: flex-end;
             justify-content: space-around;
@@ -45,27 +47,19 @@ class  PlayPage extends HTMLElement {
             display: flex;
             flex-direction: column;
         }
-        .computer-hand {
+        .player1-hand {
             padding-top: 155px;
-            align-self: flex-start;
+            align-self: center;
             transform: rotate(180deg);
         }
-        .user-hand {
+        .player2-hand {
             margin-top: 80px;
+            align-self: center;
             transform: translateY(-25px);
         }
 
-        /* Con esto ajusto el contador a todas las pantallas y modifico el circulo del div */
+        /* Con esto ajusto el contador a todas las pantallas */
 
-        .circle {
-            width: 250px;
-            display: flex;
-            height: 250px;
-            margin: 14% 60px;
-            border: 10px solid;
-            align-self: center;
-            border-radius: 50%;
-        }
         .countdown-timer {
             top: 9%;
             left: 38%;
@@ -156,13 +150,12 @@ class  PlayPage extends HTMLElement {
         `;
         
         playContainer.innerHTML = `
-            <div class="circle">
             <h2 class="countdown-timer"> ${limitedTimer} </h2>
             </div>
             <div class="hands-container-countdown">
-            <hand-comp hand="tijera"></hand-comp>
-            <hand-comp hand="piedra"></hand-comp>
-            <hand-comp hand="papel"></hand-comp>
+            <hand-comp hand="scissor"></hand-comp>
+            <hand-comp hand="rock"></hand-comp>
+            <hand-comp hand="paper"></hand-comp>
             </div>
         `;
         const handComponents = playContainer.querySelectorAll("hand-comp");
@@ -172,7 +165,19 @@ class  PlayPage extends HTMLElement {
             hand.addEventListener("handClick", (e: any) => {
     
                 const movementChosen = e.detail.handMove;
-                state.setMove();
+
+                if (currentState["userName-player2"] == "") {
+                    state.setMove(movementChosen, () => {
+                    
+                        state.setState(currentState);
+                    });
+                }
+                if (currentState["userName-player1"] == "") {
+                    state.setMove(movementChosen, () => {
+    
+                        state.setState(currentState);
+                    });
+                }
     
                 handComponents.forEach((auxHand) => {
     
@@ -190,37 +195,41 @@ class  PlayPage extends HTMLElement {
             });
         });
     
-        const countdownTimerEl = playContainer.querySelector(".countdown-timer");    
-        const currentGame = state.getCurrentGame();
+        const countdownTimerEl = playContainer.querySelector(".countdown-timer");
     
         let intervalTimer = setInterval(() => {
-            
-            if (limitedTimer < 0) {
-
+            if (limitedTimer < 0) {                
+    
                 clearInterval(intervalTimer);
                 playContainer.classList.add("game-hands-show");
                 playContainer.innerHTML = `
-                    <hand-comp hand=${currentGame["player1-move"]} class="computer-hand" height="215px" width="90px"></hand-comp>
-                    <hand-comp hand=${currentGame["player2-move"]} class="user-hand" height="215px" width="90px"></hand-comp>
+                    <hand-comp hand=${currentState["rtdb"]["player-1"]["move"]} class="player1-hand" height="215px" width="90px"></hand-comp>
+
+                    <hand-comp hand=${currentState["rtdb"]["player-2"]["move"]} class="player2-hand" height="215px" width="90px"></hand-comp>
                 `;
-                if (currentGame["player1-move"] == "none") {
+                if (currentState["rtdb"]["player-1"]["move"] == "none") {
                     Router.go("/instructions");
+                }
+
+                if (currentState["rtdb"]["player-2"]["move"] == "none") {
+                    Router.go("/instructions");
+
                 } else {
                     let resultTimer: number = 3;
                     let goToResult = setTimeout(() => {
-                        // Router.go("/result");
-                        
+
+                        Router.go("/result");
                         resultTimer --;
                     }, 2000);
-                    
+                        
                     if (resultTimer === 0) {
                         clearTimeout(goToResult);
                     }
                 }
             }
             countdownTimerEl.textContent = limitedTimer.toString();
-            
-            // limitedTimer --;
+                
+            limitedTimer --;
         }, 1000);
 
         this.shadow.appendChild(playContainer);

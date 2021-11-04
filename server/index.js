@@ -61,12 +61,30 @@ app.post("/rooms", function (req, res) {
         if (doc.exists) {
             var roomRef_1 = db_1.rtdb.ref("rooms/" + (0, nanoid_1.nanoid)());
             roomRef_1.set({
-                from: userId
+                "player-1": {
+                    "userName": "",
+                    "userId": "",
+                    "online": false,
+                    "ready-to-play": "",
+                    "move": ""
+                },
+                "player-2": {
+                    "userName": "",
+                    "userId": "",
+                    "online": false,
+                    "ready-to-play": "",
+                    "move": ""
+                },
+                "owner-of-the-room": userId
             }).then(function () {
                 var roomLongId = roomRef_1.key;
                 var roomId = 1000 + Math.floor(Math.random() * 999);
                 roomsCollection.doc(roomId.toString())
                     .set({
+                    "current-game": {
+                        "player-1": 0,
+                        "player-2": 0
+                    },
                     rtdbRoomId: roomLongId
                 })
                     .then(function () {
@@ -83,9 +101,55 @@ app.post("/rooms", function (req, res) {
         }
     });
 });
+app.get("/rooms/:roomId", function (req, res) {
+    var roomId = req.params.roomId;
+    var userId = req.query.userId;
+    userCollection
+        .doc(userId.toString())
+        .get().then(function (doc) {
+        if (doc.exists) {
+            roomsCollection
+                .doc(roomId.toString())
+                .get()
+                .then(function (doc) {
+                var data = doc.data();
+                res.json(data);
+            });
+        }
+        else {
+            res.status(401).json({
+                message: "no existis"
+            });
+        }
+    });
+});
+app.post("/choice/:longRoomId/:userId", function (req, res) {
+    var longRoomId = req.params.longRoomId;
+    var userId = req.params.userId;
+    var move = req.body.move;
+    userCollection.doc(userId.toString())
+        .get().then(function (user) {
+        if (user.exists) {
+            var roomRef = db_1.rtdb.ref("rooms/" + longRoomId);
+            roomRef.set({
+                userId: userId,
+                move: move
+            }).then(function () {
+                res.json({
+                    userId: userId,
+                    move: move
+                });
+            });
+        }
+        else {
+            res.status(401).json({
+                message: "user didn't choose a hand"
+            });
+        }
+    });
+});
 app.use(express.static("dist"));
 var relativeRoute = path.resolve(__dirname, "/dist", "index.html");
-console.log(relativeRoute);
 app.listen(port, function () {
     console.log("Iniciado en el puerto:", port);
 });

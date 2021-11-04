@@ -99,9 +99,9 @@ class ChooseNameSecondPlayer extends HTMLElement {
                 </form>
                 
                 <div class="img__container">
-                    <hand-comp hand="tijera"></hand-comp>
-                    <hand-comp hand="piedra"></hand-comp>
-                    <hand-comp hand="papel"></hand-comp>
+                    <hand-comp hand="scissor"></hand-comp>
+                    <hand-comp hand="rock"></hand-comp>
+                    <hand-comp hand="paper"></hand-comp>
                 </div>
             </div>
         `;

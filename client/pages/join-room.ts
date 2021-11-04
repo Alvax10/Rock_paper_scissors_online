@@ -17,24 +17,22 @@ class JoinRoom extends HTMLElement {
         formEl.addEventListener("submit", (e: any) => {
             e.preventDefault();
             currentState.roomId = inputRoomIdEl.value.toString();
-
+            
             state.accessToRoom(()=> {
                 console.log("accedí al room");
-                
-                state.listenRoom(() => {
-                    state.loadInfoToTheRtdb(() => {
-                        
-                        state.suscribe(() => {
-        
-                            if (currentState["rtdb"]["player-1"].online && currentState["rtdb"]["player-2"].online) {
-        
-                                Router.go("/instructions");
-                                    
-                            } else {
-                                Router.go("/cannot-access-room");
-                            }
-                        });
-                    });
+
+                state.loadInfoToTheRtdb();
+                state.listenRoom();
+                state.suscribe(() => {
+
+                    if (window.location.pathname.toString() == "/join-room" && currentState["rtdb"]["player-1"]["online"] == true && currentState["rtdb"]["player-2"]["online"] == true) {
+    
+                        Router.go("/instructions");
+                    }
+                    if (window.location.pathname.toString() == "/join-room" && currentState["rtdb"]["player-1"]["online"] == false || currentState["rtdb"]["player-2"]["online"] == false) {
+
+                        console.error("One of the players isn't connected");
+                    }
                 });
             });
         });
@@ -115,9 +113,9 @@ class JoinRoom extends HTMLElement {
                 </form>
                 
                 <div class="img__container">
-                    <hand-comp hand="tijera"></hand-comp>
-                    <hand-comp hand="piedra"></hand-comp>
-                    <hand-comp hand="papel"></hand-comp>
+                    <hand-comp hand="scissor"></hand-comp>
+                    <hand-comp hand="rock"></hand-comp>
+                    <hand-comp hand="paper"></hand-comp>
                 </div>
             </div>
         `;

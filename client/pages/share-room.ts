@@ -11,20 +11,17 @@ class shareRoom extends HTMLElement {
         this.render();
         const currentState = state.getState();
 
-        state.loadInfoToTheRtdb(() => {
-            
-            state.listenRoom(() => {
+        state.loadInfoToTheRtdb();
+        state.listenRoom();
+        state.suscribe(() => {
 
-                state.suscribe(() => {
-
-                    if (currentState["rtdb"]["player-2"].online == false) {
-                        console.error("player 2 is not connected");
-                    } else {
-                       Router.go("/instructions");
-                    }
-                });
-            });
-        });
+            if (window.location.pathname.toString() == "/share-room" && currentState["rtdb"]["player-2"]["online"] == false) {
+                console.error("PLayer 2 isn't connected");
+            }
+            if (window.location.pathname.toString() == "/share-room" && currentState["rtdb"]["player-2"]["online"] == true) {
+                Router.go("/instructions");
+            }
+        })
     }
     render() {
         const divEl = document.createElement("div");
@@ -106,9 +103,9 @@ class shareRoom extends HTMLElement {
                     </div>
 
                     <div class="img__container">
-                        <hand-comp hand="tijera"></hand-comp>
-                        <hand-comp hand="piedra"></hand-comp>
-                        <hand-comp hand="papel"></hand-comp>
+                        <hand-comp hand="scissor"></hand-comp>
+                        <hand-comp hand="rock"></hand-comp>
+                        <hand-comp hand="paper"></hand-comp>
                     </div>
                 </div>
             </div>

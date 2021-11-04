@@ -1,9 +1,8 @@
-import { state } from "../../state";
 
 const handFiles = {
-    piedra: require("url:../assets/piedra-hand.png"),
-    papel: require("url:../assets/papel-hand.png"),
-    tijera: require("url:../assets/tijera-hand.png"),
+    rock: require("url:../assets/piedra-hand.png"),
+    paper: require("url:../assets/papel-hand.png"),
+    scissor: require("url:../assets/tijera-hand.png"),
 };
 
 export function handsComp() {
