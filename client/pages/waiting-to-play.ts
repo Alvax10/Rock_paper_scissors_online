@@ -10,20 +10,17 @@ class waitingToPlay extends HTMLElement {
     connectedCallback() {
         this.render();
         const currentState = state.getState();
-        const currentLocation = window.location.href.toString();
-        const player1Ready = currentState["rtdb"]["player-1"]["ready-to-play"];
-        const player2Ready = currentState["rtdb"]["player-2"]["ready-to-play"];
 
         state.listenRoom()
         state.suscribe(() => {
 
             // Esta sección de código chequea desde la rtdb si ambos jugadores están listos para jugar, si es así, los lleva a la playing page.
     
-            if (currentLocation == "/waiting-to-play" && !player1Ready || !player2Ready) {
+            if (window.location.pathname.toString() == "/waiting-to-play" && currentState["rtdb"]["player-1"]["ready-to-play"] == "" || currentState["rtdb"]["player-2"]["ready-to-play"] == "") {
             
                 console.error("One of the players isn't ready");
             }
-            if (currentLocation == "/waiting-to-play" && player1Ready && player2Ready) {
+            if (window.location.pathname.toString() == "/waiting-to-play" && currentState["rtdb"]["player-1"]["ready-to-play"] == "start" && currentState["rtdb"]["player-2"]["ready-to-play"] == "start") {
 
                 Router.go("/playing");
             }

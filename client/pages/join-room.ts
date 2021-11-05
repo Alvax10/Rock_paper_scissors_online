@@ -13,9 +13,6 @@ class JoinRoom extends HTMLElement {
         const currentState = state.getState();
         const formEl = this.shadow.querySelector(".join-room__form");
         const inputRoomIdEl = (this.shadow.querySelector(".input-room-id") as HTMLInputElement);
-        const currentLocation = window.location.href;
-        const player1Online = currentState["rtdb"]["player-1"]["online"];
-        const player2Online = currentState["rtdb"]["player-2"]["online"];
 
         formEl.addEventListener("submit", (e: any) => {
             e.preventDefault();
@@ -28,11 +25,11 @@ class JoinRoom extends HTMLElement {
                 state.listenRoom();
                 state.suscribe(() => {
 
-                    if (currentLocation == "/join-room" && player1Online && player2Online) {
+                    if (window.location.pathname.toString() == "/join-room" && currentState["rtdb"]["player-1"]["online"] == true && currentState["rtdb"]["player-2"]["online"] == true) {
     
                         Router.go("/instructions");
                     }
-                    if (currentLocation == "/join-room" && !player1Online || !player2Online) {
+                    if (window.location.pathname.toString() == "/join-room" && currentState["rtdb"]["player-1"]["online"] == false || currentState["rtdb"]["player-2"]["online"] == false) {
 
                         console.error("One of the players isn't connected");
                     }

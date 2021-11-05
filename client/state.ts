@@ -6,8 +6,8 @@ import { rtdb } from "../server/rtdb";
 type move = "scissor" | "paper" | "rock";
 type result = "wins-player1" | "lose-player1" | "tie";
 
-// const API_BASE_URL = "http://localhost:3000";
-const API_BASE_URL = "https://desafio-final-m6.herokuapp.com";
+const API_BASE_URL = "http://localhost:3000";
+// const API_BASE_URL = "https://desafio-final-m6.herokuapp.com";
 
 const state = {
     data: {
