@@ -11,8 +11,8 @@ class waitingToPlay extends HTMLElement {
         this.render();
         const currentState = state.getState();
         const currentLocation = window.location.href.toString();
-        const player1Ready = currentState["rtdb"]["player-1"]["ready-to-play"] == "start";
-        const player2Ready = currentState["rtdb"]["player-2"]["ready-to-play"] == "start";
+        const player1Ready = currentState["rtdb"]["player-1"]["ready-to-play"];
+        const player2Ready = currentState["rtdb"]["player-2"]["ready-to-play"];
 
         state.listenRoom()
         state.suscribe(() => {
