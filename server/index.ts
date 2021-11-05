@@ -175,6 +175,10 @@ app.use(express.static("dist"));
 
 const relativeRoute = path.resolve(__dirname, "/dist", "index.html");
 
+app.get("*", (req, res) => {
+  relativeRoute;
+});
+
 app.listen(port, ()=> {
     console.log("Iniciado en el puerto:", port);
 });

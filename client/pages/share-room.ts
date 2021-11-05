@@ -10,6 +10,8 @@ class shareRoom extends HTMLElement {
     connectedCallback() {
         this.render();
         const currentState = state.getState();
+        const currentLocation = window.location.href;
+        const player2Online = currentState["rtdb"]["player-2"]["online"] == true;
 
         state.loadInfoToTheRtdb();
         state.listenRoom();
@@ -17,10 +19,10 @@ class shareRoom extends HTMLElement {
 
             // Esta sección de código hace lo mismo que la página join-room (leer esa página para entender que hace este código).
 
-            if (window.location.pathname.toString() == "/share-room" && currentState["rtdb"]["player-2"]["online"] == false) {
+            if (currentLocation == "/share-room" && !player2Online) {
                 console.error("PLayer 2 isn't connected");
             }
-            if (window.location.pathname.toString() == "/share-room" && currentState["rtdb"]["player-2"]["online"] == true) {
+            if (currentLocation == "/share-room" && player2Online) {
                 Router.go("/instructions");
             }
         })
